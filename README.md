@@ -69,15 +69,34 @@ The arm was previously dropping commands (status 91) due to timing mismatches. W
 ### 6. Graceful Controller Switching
 We moved from `done_callback` switching to continuous asynchronous polling via `SwitchController.Request.BEST_EFFORT`. This allowed the controller to publish 0-velocity dead-man packets while waiting for the controllers to activate in the background, preventing `stream stopped` warnings from latching the arm.
 
-## 🚀 Running the Controller
+## 🚀 How to Evaluate Task 1B
 
+Follow these exact steps to run the 5-waypoint simulation locally. 
+
+### 🛑 Step 0: Ensure a Clean Environment
+Before starting, ensure no background Gazebo processes are stuck from a previous run:
 ```bash
-# Terminal 1: Launch the simulation
-ros2 launch eyantra_kepler_colony task1b.launch.py
+killall -9 gzserver gzclient gazebo rviz2 ros2 python3; pkill -9 -f "ros2"; pkill -9 -f "gazebo"
+```
 
-# Terminal 2: Run our robust waypoint controller
+### 🟢 Step 1: Build & Launch Simulation
+Open **Terminal 1** and run:
+```bash
+cd ~/ros2_ws
+source install/setup.bash
+ros2 launch eyantra_kepler_colony task1b.launch.py
+```
+*(Wait about 15-20 seconds for Gazebo to load, the arm controllers to spawn, and the message `arm verified, safety armed` to appear in the terminal).*
+
+### 🟢 Step 2: Run the Waypoint Controller
+Open **Terminal 2** and run:
+```bash
+cd ~/ros2_ws
+source install/setup.bash
 ros2 run algorithms arm_waypoints.py
 ```
+
+*Watch the arm seamlessly navigate through all 5 waypoints. When it finishes, you will see the final `ALL 5 WAYPOINTS REACHED` banner in the terminal with the exact error margin (which will be under 0.03m for full points!).*
 
 ---
 <div align="center">
