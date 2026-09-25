@@ -56,15 +56,34 @@ Our solution is contained in the `ore_detector.py` node. Here is a breakdown of 
    - For every valid ore, we calculate image moments (`cv2.moments`) to pinpoint the precise `(Cx, Cy)` center pixel coordinate.
    - These coordinates are broadcasted back into the ROS network for the robotic arm to consume in later tasks!
 
-## 🚀 Running the Node
+## 🚀 How to Evaluate Task 1A
 
-You can launch the ore detector node via ROS 2 by running:
+Follow these exact steps to run the simulation and node locally:
 
+### 🛑 Step 0: Ensure a Clean Environment
+Before starting, ensure no background Gazebo processes are stuck from a previous run:
 ```bash
-ros2 run algorithms ore_detector.py
+killall -9 gzserver gzclient gazebo rviz2 ros2 python3; pkill -9 -f "ros2"; pkill -9 -f "gazebo"
 ```
 
-*Ensure the Gazebo simulation is active and publishing to the camera topic before running the script!*
+### 🟢 Step 1: Build & Launch Simulation
+Open **Terminal 1** and run:
+```bash
+cd ~/ros2_ws
+colcon build
+source install/setup.bash
+ros2 launch eyantra_kepler_colony task1a.launch.py
+```
+*(Wait for Gazebo to fully load the Kepler Colony and initialize the camera feed)*
+
+### 🟢 Step 2: Run the Ore Detector
+Open **Terminal 2** and run:
+```bash
+cd ~/ros2_ws
+source install/setup.bash
+ros2 run algorithms ore_detector.py
+```
+*You will immediately see the node outputting the processed OpenCV coordinates and bounding boxes of the ores.*
 
 ---
 <div align="center">
