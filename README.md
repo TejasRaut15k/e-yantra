@@ -1,54 +1,51 @@
-# Walkthrough: E-Yantra Task 1B Implementation
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=250&section=header&text=e-Yantra%20Robotics%20Competition%202026&fontSize=40&fontAlignY=38&desc=Team%20StrataCobot%20%7C%20Learning%20ROS%202&descAlignY=55&descAlign=62" />
+</div>
 
-## Final Execution Results 🏆
+<h1 align="center">🤖 e-Yantra 2026: StrataCobot Theme</h1>
 
-The custom controller has successfully achieved a flawless, continuous run across all 5 waypoints, hitting the **Bonus Threshold** (errors $\leq 0.03\text{m}$) at every single target from a fresh simulation.
+<div align="center">
+  <img src="https://img.shields.io/badge/ROS%202-Humble-22314E?style=for-the-badge&logo=ros&logoColor=white" />
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/Gazebo-Ignition-FFB300?style=for-the-badge&logo=gazebo&logoColor=white" />
+  <img src="https://img.shields.io/badge/OpenCV-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white" />
+</div>
 
-**Final Waypoint Accuracy:**
-* **WP1:** $0.0114\text{m}$ ✅
-* **WP2:** $0.0054\text{m}$ ✅
-* **WP3:** $0.0134\text{m}$ ✅
-* **WP4:** $0.0113\text{m}$ ✅
-* **WP5:** $0.0113\text{m}$ ✅
+---
 
-> [!TIP]
-> The exact final output log matches your requirement exactly: no CRITICAL_SINGULARITY, no protective stop, no joint-limit events, and no command-stream failures!
+## 🌟 Welcome to Our Journey!
 
-## Key Challenges Overcome
+Welcome to our main repository for the **e-Yantra 2026 Robotics Competition (StrataCobot Theme)**. This repository serves as the central hub for our learning outcomes, experiments, and final task submissions. We are documenting our journey of learning ROS 2, robot kinematics, computer vision, and autonomous control!
 
-The main hurdle in this task was that the UR7e arm, if instructed via simple Cartesian velocity without orientation management, would naturally lock its elbow out and enter a **Critical Singularity** (Status 21/22) when reaching for far waypoints (like WP2 and WP3 at horizontal ranges > 0.8m). If it crossed $q_2 \approx 0$ (a straight elbow), the internal protective stop would latch and instantly fail the task. 
+<p align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=24&pause=1000&color=F71186&center=true&vCenter=true&width=600&lines=Mastering+ROS+2+Controllers;Solving+Kinematic+Singularities;Building+Robust+State+Machines;Computer+Vision+with+OpenCV;Ready+to+win+e-Yantra+2026!" alt="Typing SVG" />
+</p>
 
-Here is how we redesigned the pipeline to achieve 100% reliability:
+## 🚀 Branch Organization
 
-### 1. Granular 6-State Controller
-Instead of mixing translation, rotation, and elevation, we strictly decoupled every motion into 6 distinct steps per waypoint:
-1. **LIFT**: Move straight up on the Z-axis to 0.55m altitude.
-2. **ROTATE**: Use the `JointJog` (`delta_joint_controller`) exclusively to spin the shoulder pan to exactly face the target.
-3. **ORIENT**: *Crucial step.* Tilt the end-effector to a predetermined safety angle BEFORE starting horizontal translation, ensuring the elbow never hits 0.
-4. **TRANSLATE**: Translate via `TwistStamped` (`delta_twist_controller`) strictly along the XY plane to the target radius. 
-5. **DROP**: Descend purely on the Z-axis down to the exact waypoint.
-6. **HOLD**: Command strict `0.0` velocities to firmly lock the tool for 2.5 seconds. 
+We have organized our task submissions into specific branches to keep things orderly and easy to evaluate.
 
-### 2. Radial Retraction on Lift
-When LIFTing from a very far waypoint (like WP3 at r=0.91m), commanding a pure Z-velocity pushes the elbow towards 0. To counter this, if the arm is extended beyond `r > 0.75m`, the LIFT step artificially commands negative radial velocity to pull the tool inwards towards the base as it rises. This acts like a human bending their elbow back into their chest before reaching for the next target, totally eliminating the lift-singularity.
+### 🌿 Active Branches
+| Branch Name | Description | Status |
+| :--- | :--- | :---: |
+| [**`main`**](https://github.com/TejasRaut15k/e-yantra/tree/main) | General overview, learning outcomes, and repository structure. | 🟢 Active |
+| [**`task-1a`**](https://github.com/TejasRaut15k/e-yantra/tree/task-1a) | **OpenCV Color & Ore Detection**: Computer vision pipeline for identifying ore types. | 🟢 Complete |
+| [**`task-1b`**](https://github.com/TejasRaut15k/e-yantra/tree/task-1b) | **UR7e Arm Waypoint Navigation**: Flawless 40/40 run utilizing a custom 6-stage state machine and singularity mitigation. | 🟢 Complete |
 
-### 3. Dynamic Tool Tilt 
-If we kept the end-effector perfectly perpendicular to the table, WP2 and WP3 were unreachable. We added an outward tilt heuristic based on distance:
-* **r > 0.78m:** Strong outward tilt to artificially stretch the arm's reach (`Z-vector = [tx, ty, -0.3]`).
-* **r > 0.60m:** Gentle outward tilt (`Z-vector = [tx, ty, -1.0]`).
-* **r < 0.60m:** Straight down (`Z-vector = [0.0, 0.0, -1.0]`).
+> **Note to Evaluators:** Please switch to the respective branch to view the specific source code, implementation details, and documentation for that task.
 
-### 4. The Drop Curl
-When descending to a far waypoint, maintaining a strong outward tilt during the DROP step forced the arm to remain at its extreme reach limit. Instead, the DROP phase forces the tool to gently transition back to pointing straight down (`[0, 0, -1]`). As it descends, this causes the wrist to curl inwards naturally, safely bending the elbow out of the singularity zone.
+---
 
-### 5. `use_sim_time=True` Timestamping Fix
-The arm was previously dropping commands (status 91) due to timing mismatches. We hardcoded `use_sim_time=True` directly into the Node's parameter override during `__init__`, ensuring the published `header.stamp` perfectly aligned with Gazebo's simulated clock.
+## 📚 Learning Outcomes
 
-### 6. Graceful Controller Switching
-We moved from `done_callback` switching to continuous asynchronous polling via `SwitchController.Request.BEST_EFFORT`. This allowed the controller to publish 0-velocity dead-man packets while waiting for the controllers to activate in the background, preventing `stream stopped` warnings from latching the arm.
+Through our participation in e-Yantra 2026, we have actively developed skills in:
+- **ROS 2 Architecture**: Nodes, Topics, Services, and Actions.
+- **Robot Control**: Dealing with `TwistStamped` (Cartesian) and `JointJog` (Joint-space) controllers.
+- **Kinematics & Singularities**: Successfully preventing protective stops and elbow lock-outs during maximum extension of the UR7e arm.
+- **State Machines**: Designing robust, phase-based execution flows.
 
-## Code Availability
-The final, optimized controller code is permanently saved at:
-[arm_waypoints.py](file:///home/tejas-raut/ros2_ws/src/algorithms/scripts/task1b/arm_waypoints.py)
-
-The algorithms package was fully rebuilt and tested from a 100% clean environment, guaranteeing out-of-the-box performance for the final evaluation.
+---
+<div align="center">
+  <img src="https://komarev.com/ghpvc/?username=TejasRaut15k&label=Repo%20Views&color=0e75b6&style=flat" alt="Views" />
+  <p><i>"Building the future, one node at a time."</i></p>
+</div>
