@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+  <xacro:macro name="ur_end_effector_sensor"
+    params="
+    tf_prefix
+    tool_xyz:='0.005 0.0 0.0'
+    tool_rpy:='0.0 0.0 0.0'
+    mass:=0.5
+    collision_mesh:=false
+    update_rate:=100
+    wrench_topic:=/end_effector_wrench
+    force_abs_paths:=false
+    ">
+
+    <xacro:if value="${force_abs_paths}">
+      <xacro:property name="mesh_prefix" value="file://$(find ur_description)" />
+    </xacro:if>
+    <xacro:unless value="${force_abs_paths}">
+      <xacro:property name="mesh_prefix" value="package://ur_description" />
+    </xacro:unless>
+
+    <xacro:property name="tool_x" value="0.066" />
+    <xacro:property name="tool_y" value="0.081" />
+    <xacro:property name="tool_z" value="0.081" />
+    <xacro:property name="mesh_cx" value="-0.01759" />
+    <xacro:property name="mesh_cy" value="-0.00006" />
+    <xacro:property name="mesh_cz" value="0.00054" />
+
+    <xacro:property name="body_x" value="${mesh_cx + float(tool_xyz.split()[0])}" />
+    <xacro:property name="body_y" value="${mesh_cy + float(tool_xyz.split()[1])}" />
+    <xacro:property name="body_z" value="${mesh_cz + float(tool_xyz.split()[2])}" />
+
+    <link name="${tf_prefix}end_effector">
+      <visual>
+        <origin xyz="${tool_xyz}" rpy="${tool_rpy}" />
+        <geometry>
+          <mesh filename="${mesh_prefix}/meshes/ur7e/visual/end_effector_tool.dae" />
+        </geometry>
+      </visual>
+
+      <xacro:if value="${collision_mesh}">
+        <collision>
+          <origin xyz="${tool_xyz}" rpy="${tool_rpy}" />
+          <geometry>
+            <mesh filename="${mesh_prefix}/meshes/ur7e/collision/end_effector_tool.dae" />
+          </geometry>
+        </collision>
+      </xacro:if>
+      <xacro:unless value="${collision_mesh}">
+        <collision>
+          <origin xyz="${body_x} ${body_y} ${body_z}" rpy="0 ${pi / 2.0} 0" />
+          <geometry>
+            <cylinder radius="${tool_y / 2.0}" length="${tool_x}" />
+          </geometry>
+        </collision>
+      </xacro:unless>
+
+      <inertial>
+        <mass value="${mass}" />
+        <origin xyz="${body_x} ${body_y} ${body_z}" rpy="0 0 0" />
+        <inertia
+          ixx="${mass * (tool_y * tool_y + tool_z * tool_z) / 12.0}" ixy="0.0" ixz="0.0"
+          iyy="${mass * (tool_x * tool_x + tool_z * tool_z) / 12.0}" iyz="0.0"
+          izz="${mass * (tool_x * tool_x + tool_y * tool_y) / 12.0}" />
+      </inertial>
+    </link>
+
+    <joint name="${tf_prefix}flange-end_effector" type="prismatic">
+      <parent link="${tf_prefix}flange" />
+      <child link="${tf_prefix}end_effector" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <axis xyz="1 0 0" />
+      <limit lower="-0.010" upper="0.0" effort="1000.0" velocity="1.0" />
+      <dynamics damping="120.0" friction="0.0" />
+    </joint>
+
+    <gazebo reference="${tf_prefix}flange-end_effector">
+      <sensor name="end_effector_ft_sensor" type="force_torque">
+        <gz_frame_id>${tf_prefix}end_effector</gz_frame_id>
+        <always_on>true</always_on>
+        <update_rate>${update_rate}</update_rate>
+        <topic>${wrench_topic}</topic>
+        <force_torque>
+          <frame>child</frame>
+          <measure_direction>parent_to_child</measure_direction>
+        </force_torque>
+      </sensor>
+    </gazebo>
+
+  </xacro:macro>
+</robot>

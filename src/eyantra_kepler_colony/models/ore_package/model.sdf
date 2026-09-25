@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <model name="ore_package">
+    <static>false</static>
+    <link name="ore_package_link">
+
+      <inertial>
+        <pose>0 0 0.003802 0 0 0</pose>
+        <mass>0.3000</mass>
+        <inertia>
+          <ixx>0.00063306</ixx><ixy>0</ixy><ixz>0</ixz>
+          <iyy>0.00093548</iyy><iyz>0</iyz>
+          <izz>0.00127822</izz>
+        </inertia>
+      </inertial>
+
+      <visual name="visual">
+        <geometry>
+          <mesh><uri>model://ore_package/meshes/ore_package.dae</uri></mesh>
+        </geometry>
+      </visual>
+
+      <collision name="collision">
+        <pose>0 0 0.003802 0 0 0</pose>
+        <geometry>
+          <box><size>0.1778 0.1397 0.0762</size></box>
+        </geometry>
+        <surface>
+          <friction>
+            <ode><mu>1.0</mu><mu2>1.0</mu2></ode>
+          </friction>
+        </surface>
+      </collision>
+
+    </link>
+  </model>
+</sdf>

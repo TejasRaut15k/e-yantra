@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <model name="rock_3">
+    <static>true</static>
+    <link name="link">
+
+      <visual name="visual_glb">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>meshes/3.glb</uri>
+          </mesh>
+        </geometry>
+      </visual>
+
+      <visual name="visual_collision">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>meshes/3.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+            <ambient>1 1 1 1</ambient>
+            <diffuse>1 1 1 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+        </material>
+        <transparency>1</transparency>
+      </visual>
+
+      <collision name="collision">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>meshes/3.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+    </link>
+  </model>
+</sdf>

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+  <xacro:macro name="ur_link_contact_sensors"
+    params="
+    tf_prefix
+    update_rate:=100
+    include_end_effector:=true
+    ">
+
+    <xacro:macro name="_link_contact" params="link">
+      <gazebo reference="${tf_prefix}${link}">
+        <sensor name="${link}_contact_sensor" type="contact">
+          <always_on>true</always_on>
+          <update_rate>${update_rate}</update_rate>
+          <contact>
+            <collision>${tf_prefix}${link}_collision</collision>
+            <topic>/arm_contact</topic>
+          </contact>
+        </sensor>
+      </gazebo>
+    </xacro:macro>
+
+    <xacro:_link_contact link="base_link_inertia" />
+    <xacro:_link_contact link="shoulder_link" />
+    <xacro:_link_contact link="upper_arm_link" />
+    <xacro:_link_contact link="forearm_link" />
+    <xacro:_link_contact link="wrist_1_link" />
+    <xacro:_link_contact link="wrist_2_link" />
+    <xacro:_link_contact link="wrist_3_link" />
+
+    <xacro:if value="${include_end_effector}">
+      <xacro:_link_contact link="end_effector" />
+    </xacro:if>
+
+  </xacro:macro>
+</robot>

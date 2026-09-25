@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<sdf version="1.9" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:arg name="plugin_enabled" default=""/>
+  <xacro:arg name="rocks_enabled" default=""/>
+  <xacro:arg name="ores_enabled" default=""/>
+  <xacro:arg name="path_publishing_enabled" default=""/>
+  <xacro:arg name="ore_package_enabled" default=""/>
+
+  <world name="eyantra_kepler_world">
+
+    <physics name='2ms' type='ignored'>
+      <max_step_size>0.002</max_step_size>
+      <real_time_factor>1</real_time_factor>
+    </physics>
+
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"></plugin>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"></plugin>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"></plugin>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin filename="gz-sim-contact-system" name="gz::sim::systems::Contact"></plugin>
+    <plugin filename="gz-sim-forcetorque-system" name="gz::sim::systems::ForceTorque"></plugin>
+
+    <plugin filename="libkepler_arena_plugin.so" name="rock_arena::KeplerArenaPlugin">
+
+      <xacro:if value="${'$(arg plugin_enabled)' != ''}">
+        <plugin_enabled>$(arg plugin_enabled)</plugin_enabled>
+      </xacro:if>
+      <xacro:if value="${'$(arg rocks_enabled)' != ''}">
+        <rocks_enabled>$(arg rocks_enabled)</rocks_enabled>
+      </xacro:if>
+      <xacro:if value="${'$(arg ores_enabled)' != ''}">
+        <ores_enabled>$(arg ores_enabled)</ores_enabled>
+      </xacro:if>
+      <xacro:if value="${'$(arg path_publishing_enabled)' != ''}">
+        <path_publishing_enabled>$(arg path_publishing_enabled)</path_publishing_enabled>
+      </xacro:if>
+      <xacro:if value="${'$(arg ore_package_enabled)' != ''}">
+        <ore_package_enabled>$(arg ore_package_enabled)</ore_package_enabled>
+      </xacro:if>
+
+    </plugin>
+
+    <include>
+      <uri>model://kepler_world</uri>
+    </include>
+
+    <light type="point" name="mars_arena_light">
+      <pose >2.9093 -1.0047 6.1654 0 0 0</pose>
+      <cast_shadows>false</cast_shadows>
+      <intensity>3</intensity>
+      <diffuse>1.0 1.0 1.0 1</diffuse>
+      <specular>0 0 0 1</specular>
+      <attenuation>
+        <range>25</range>
+        <constant>0.5</constant>
+        <linear>0.02</linear>
+        <quadratic>0.002</quadratic>
+      </attenuation>
+    </light>
+
+    <light type="directional" name="sun">
+      <cast_shadows>false</cast_shadows>
+      <intensity>3</intensity>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>1.0 0.7 0.5 1</diffuse>
+      <specular>0 0 0 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.3 0.3 -0.9</direction>
+    </light>
+
+
+    <scene>
+      <shadows>false</shadows>
+      <ambient>0.55 0.35 0.25 1.0</ambient>
+      <background>0.6 0.35 0.2 1</background>
+      <grid>false</grid>
+      <sky>
+        <time>17</time>
+        <sunrise>6</sunrise>
+        <sunset>18</sunset>
+        <clouds>
+          <humidity>0</humidity>
+          <mean_size>0.0</mean_size>
+        </clouds>
+      </sky>
+      <fog>
+        <color>0.7 0.45 0.3 1</color>
+        <type>linear</type>
+        <start>10</start>
+        <end>40</end>
+        <density>0.3</density>
+      </fog>
+    </scene>
+
+  </world>
+</sdf>

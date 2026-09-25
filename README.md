@@ -1,51 +1,56 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=250&section=header&text=e-Yantra%20Robotics%20Competition%202026&fontSize=40&fontAlignY=38&desc=Team%20StrataCobot%20%7C%20Learning%20ROS%202&descAlignY=55&descAlign=62" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=timeGradient&height=150&section=header&text=Full%20ROS%202%20Workspace&fontSize=40&fontAlignY=38" />
 </div>
 
-<h1 align="center">🤖 e-Yantra 2026: StrataCobot Theme</h1>
+<h1 align="center">📦 Full e-Yantra 2026 ROS 2 Workspace</h1>
 
 <div align="center">
   <img src="https://img.shields.io/badge/ROS%202-Humble-22314E?style=for-the-badge&logo=ros&logoColor=white" />
-  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" />
   <img src="https://img.shields.io/badge/Gazebo-Ignition-FFB300?style=for-the-badge&logo=gazebo&logoColor=white" />
-  <img src="https://img.shields.io/badge/OpenCV-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white" />
 </div>
 
 ---
 
-## 🌟 Welcome to Our Journey!
+## 🌟 Overview
 
-Welcome to our main repository for the **e-Yantra 2026 Robotics Competition (StrataCobot Theme)**. This repository serves as the central hub for our learning outcomes, experiments, and final task submissions. We are documenting our journey of learning ROS 2, robot kinematics, computer vision, and autonomous control!
+Welcome to the **`full-workspace`** branch. This branch contains the **complete `src/` directory** of our ROS 2 workspace, encompassing all necessary packages (including the official competition simulation packages and our custom algorithm packages) to run the e-Yantra Kepler Colony simulation entirely out-of-the-box.
 
-<p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=24&pause=1000&color=F71186&center=true&vCenter=true&width=600&lines=Mastering+ROS+2+Controllers;Solving+Kinematic+Singularities;Building+Robust+State+Machines;Computer+Vision+with+OpenCV;Ready+to+win+e-Yantra+2026!" alt="Typing SVG" />
-</p>
-
-## 🚀 Branch Organization
-
-We have organized our task submissions into specific branches to keep things orderly and easy to evaluate.
-
-### 🌿 Active Branches
-| Branch Name | Description | Status |
-| :--- | :--- | :---: |
-| [**`main`**](https://github.com/TejasRaut15k/e-yantra/tree/main) | General overview, learning outcomes, and repository structure. | 🟢 Active |
-| [**`task-1a`**](https://github.com/TejasRaut15k/e-yantra/tree/task-1a) | **OpenCV Color & Ore Detection**: Computer vision pipeline for identifying ore types. | 🟢 Complete |
-| [**`task-1b`**](https://github.com/TejasRaut15k/e-yantra/tree/task-1b) | **UR7e Arm Waypoint Navigation**: Flawless 40/40 run utilizing a custom 6-stage state machine and singularity mitigation. | 🟢 Complete |
-
-> **Note to Evaluators:** Please switch to the respective branch to view the specific source code, implementation details, and documentation for that task.
+### 📁 Included Packages
+This workspace contains the following ROS 2 packages:
+* **`algorithms`**: Our custom logic containing the OpenCV ore detection node (Task 1A) and the 6-state Waypoint Navigation Controller (Task 1B).
+* **`eyantra_kepler_colony`**: The official competition world and environment definitions.
+* **`ebot_description`**: The official robot model and URDF for the eBot rover.
+* **`ur_description`**: The Universal Robots UR7e description, meshes, and kinematics.
 
 ---
 
-## 📚 Learning Outcomes
+## 🚀 How to Build and Run
 
-Through our participation in e-Yantra 2026, we have actively developed skills in:
-- **ROS 2 Architecture**: Nodes, Topics, Services, and Actions.
-- **Robot Control**: Dealing with `TwistStamped` (Cartesian) and `JointJog` (Joint-space) controllers.
-- **Kinematics & Singularities**: Successfully preventing protective stops and elbow lock-outs during maximum extension of the UR7e arm.
-- **State Machines**: Designing robust, phase-based execution flows.
+To set up this full workspace on your local machine, run the following commands:
+
+### 1. Clone the repository
+```bash
+mkdir -p ~/eyantra_ws
+cd ~/eyantra_ws
+git clone -b full-workspace https://github.com/TejasRaut15k/e-yantra.git src
+```
+
+### 2. Install Dependencies
+```bash
+cd ~/eyantra_ws
+rosdep update
+rosdep install --from-paths src --ignore-src -r -y
+```
+
+### 3. Build the Workspace
+```bash
+colcon build
+source install/setup.bash
+```
+
+Once built, you can follow the execution instructions detailed in the [Task 1A](https://github.com/TejasRaut15k/e-yantra/tree/task-1a) and [Task 1B](https://github.com/TejasRaut15k/e-yantra/tree/task-1b) branches!
 
 ---
 <div align="center">
-  <img src="https://komarev.com/ghpvc/?username=TejasRaut15k&label=Repo%20Views&color=0e75b6&style=flat" alt="Views" />
-  <p><i>"Building the future, one node at a time."</i></p>
+  <a href="https://github.com/TejasRaut15k/e-yantra/tree/main">🔙 Return to Main Repository</a>
 </div>
