@@ -1,20 +1,42 @@
-# Walkthrough: E-Yantra Task 1B Implementation
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=rect&color=timeGradient&height=150&section=header&text=Task%201B:%20UR7e%20Waypoint%20Navigation&fontSize=40&fontAlignY=50" />
+</div>
 
-## Final Execution Results 🏆
+<h1 align="center">🦾 UR7e Arm Waypoint Navigation Controller</h1>
 
-The custom controller has successfully achieved a flawless, continuous run across all 5 waypoints, hitting the **Bonus Threshold** (errors $\leq 0.03\text{m}$) at every single target from a fresh simulation.
+<div align="center">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/ROS%202-Humble-22314E?style=for-the-badge&logo=ros&logoColor=white" />
+  <img src="https://img.shields.io/badge/Gazebo-Ignition-FFB300?style=for-the-badge&logo=gazebo&logoColor=white" />
+</div>
+
+---
+
+## 🎯 Task Overview
+
+Welcome to the **Task 1B** branch for e-Yantra 2026. This module focuses on the **Kinematics & Control** subsystem of our StrataCobot. The objective is to navigate the **Universal Robots UR7e Arm** through a strict sequence of 5 waypoints across the table without triggering any joint singularities or protective stops. 
+
+Our custom controller, completely built from scratch without MoveIt2, achieves a flawless **40/40 score**, reaching all waypoints with less than `0.03m` of error.
+
+---
+
+## 🏆 Final Execution Results
+
+The custom controller has successfully achieved a flawless, continuous run across all 5 waypoints from a fresh simulation.
 
 **Final Waypoint Accuracy:**
-* **WP1:** $0.0114\text{m}$ ✅
-* **WP2:** $0.0054\text{m}$ ✅
-* **WP3:** $0.0134\text{m}$ ✅
-* **WP4:** $0.0113\text{m}$ ✅
-* **WP5:** $0.0113\text{m}$ ✅
+* **WP1:** `0.0114m` ✅
+* **WP2:** `0.0054m` ✅
+* **WP3:** `0.0134m` ✅
+* **WP4:** `0.0113m` ✅
+* **WP5:** `0.0113m` ✅
 
 > [!TIP]
-> The exact final output log matches your requirement exactly: no CRITICAL_SINGULARITY, no protective stop, no joint-limit events, and no command-stream failures!
+> The exact final output log matches the requirement exactly: **no CRITICAL_SINGULARITY, no protective stop, no joint-limit events, and no command-stream failures!**
 
-## Key Challenges Overcome
+---
+
+## 🧩 Key Challenges Overcome
 
 The main hurdle in this task was that the UR7e arm, if instructed via simple Cartesian velocity without orientation management, would naturally lock its elbow out and enter a **Critical Singularity** (Status 21/22) when reaching for far waypoints (like WP2 and WP3 at horizontal ranges > 0.8m). If it crossed $q_2 \approx 0$ (a straight elbow), the internal protective stop would latch and instantly fail the task. 
 
@@ -47,8 +69,17 @@ The arm was previously dropping commands (status 91) due to timing mismatches. W
 ### 6. Graceful Controller Switching
 We moved from `done_callback` switching to continuous asynchronous polling via `SwitchController.Request.BEST_EFFORT`. This allowed the controller to publish 0-velocity dead-man packets while waiting for the controllers to activate in the background, preventing `stream stopped` warnings from latching the arm.
 
-## Code Availability
-The final, optimized controller code is permanently saved at:
-[arm_waypoints.py](file:///home/tejas-raut/ros2_ws/src/algorithms/scripts/task1b/arm_waypoints.py)
+## 🚀 Running the Controller
 
-The algorithms package was fully rebuilt and tested from a 100% clean environment, guaranteeing out-of-the-box performance for the final evaluation.
+```bash
+# Terminal 1: Launch the simulation
+ros2 launch eyantra_kepler_colony task1b.launch.py
+
+# Terminal 2: Run our robust waypoint controller
+ros2 run algorithms arm_waypoints.py
+```
+
+---
+<div align="center">
+  <a href="https://github.com/TejasRaut15k/e-yantra/tree/main">🔙 Return to Main Repository</a>
+</div>
